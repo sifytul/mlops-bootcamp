@@ -1,7 +1,8 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-import joblib
 import os
+import mlflow
+import mlflow.sklearn
 
 data = {
     "size": [500, 800, 1000, 1200, 1500, 1800],
@@ -16,7 +17,10 @@ y = df["price"]
 model = LinearRegression()
 model.fit(x, y)
 
-os.makedirs("model", exist_ok=True)
-joblib.dump(model, "model/model.pkl")
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
-print("Model trained and saved to model/model.pkl")
+with mlflow.start_run():
+    mlflow.sklearn.log_model(model, "model")
+
+print("Model trained and logged in MLflow")
