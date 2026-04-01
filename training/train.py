@@ -14,13 +14,14 @@ df = pd.DataFrame(data)
 x = df[["size"]]
 y = df["price"]
 
-model = LinearRegression()
-model.fit(x, y)
-
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
+mlflow.autolog()  # Automatically log parameters, metrics, and models   
 with mlflow.start_run():
+
+    model = LinearRegression()
+    model.fit(x, y)
     mlflow.sklearn.log_model(model, "model")
 
 print("Model trained and logged in MLflow")
