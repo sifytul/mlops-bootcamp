@@ -22,12 +22,14 @@ model = LinearRegression()
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 print(f"Using MLflow Tracking URI: {MLFLOW_TRACKING_URI}")
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+os.environ['MLFLOW_ARTIFACT_DESTINATION'] = "./mlruns"
+
 
 mlflow.autolog()  # Automatically log parameters, metrics, and models   
 with mlflow.start_run():
 
     model.fit(x, y)
-    mlflow.sklearn.log_model(model, "model")
+    mlflow.sklearn.log_model(sk_model=model, name="model")
 
     mlflow.register_model(
             "runs:/{}/model".format(mlflow.active_run().info.run_id),
